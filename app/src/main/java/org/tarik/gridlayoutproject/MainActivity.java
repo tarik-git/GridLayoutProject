@@ -1,8 +1,12 @@
 package org.tarik.gridlayoutproject;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
+
+import org.tarik.gridlayoutproject.databinding.ActivityMainBinding;
 
 import java.util.Arrays;
 import java.util.List;
@@ -60,9 +64,38 @@ public class MainActivity extends AppCompatActivity {
             )
     );
 
+    private ActivityMainBinding binding;
+    private LinearAdapter linearAdapter = new LinearAdapter();
+    private GridAdapter gridAdapter = new GridAdapter();
+    private boolean toggleLayout = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        linearAdapter.setPersonList(personList);
+        gridAdapter.setPersonList(personList);
+
+        setupAdapter();
+
+        binding.changeLayoutButton.setOnClickListener(v -> {
+            toggleLayout = !toggleLayout;
+            setupAdapter();
+        });
+
     }
+
+    private void setupAdapter() {
+        if (toggleLayout) {
+            binding.recyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+            binding.recyclerView.setAdapter(linearAdapter);
+        } else {
+            binding.recyclerView.setLayoutManager(new GridLayoutManager(getBaseContext(), 3));
+            binding.recyclerView.setAdapter(gridAdapter);
+        }
+
+    }
+
 }
